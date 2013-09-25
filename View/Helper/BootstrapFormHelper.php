@@ -1,12 +1,4 @@
 <?php
-/**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- *
- * Licensed under The MIT License
- *
- * Copyright (c) La Pâtisserie, Inc. (http://patisserie.keensoftware.com/)
- * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- */
 
 App::uses('FormHelper', 'View/Helper');
 
@@ -18,11 +10,11 @@ class BootstrapFormHelper extends FormHelper {
  */
 	protected $_inputDefaults = array(
 		'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
-		'div' => 'control-group',
-		'label' => array('class' => 'control-label'),
-		'between' => '<div class="controls">',
+		'div' => 'form-group',
+		'label' => array('class' => 'control-label col-lg-2'),
+		'between' => '<div class="col-lg-10">',
 		'after' => '</div>',
-		'class' => 'input-xxlarge',
+		'class' => 'form-control',
 		'error' => array('attributes' => array('wrap' => 'span', 'class' => 'help-inline'))
 	);
 
@@ -31,9 +23,9 @@ class BootstrapFormHelper extends FormHelper {
  * Also removed null array for options existing in $_inputDefaults.
  */
 	protected function _parseOptions($options) {
-		if (!empty($options['label'])) {
+		if(!empty($options['label'])) {
 			//manage case 'label' => 'your label' as well as 'label' => array('text' => 'your label') before array_merge()
-			if (!is_array($options['label'])) {
+			if(!is_array($options['label'])) {
 				$options['label'] = array('text' => $options['label']);
 			}
 			$options['label'] = array_merge_recursive($options['label'], $this->_inputDefaults['label']);
@@ -48,9 +40,17 @@ class BootstrapFormHelper extends FormHelper {
 
 /**
  * adds the default class 'form-horizontal to the <form>
- * 
+ *
  */
 	public function create($model = null, $options = array()) {
+		if(isset($this->request['language']) && !empty($options['url'])) {
+			if (is_array($options['url'])) {
+				$options['url']['language'] = Configure::read('Config.langCode');
+			} else {
+				$options['url'] = '/' . $this->request['language'] . $options['url'];
+			}
+		}
+
 		$class = array(
 			'class' => 'form-horizontal',
 		);
